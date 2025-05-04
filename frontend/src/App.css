@@ -1,0 +1,185 @@
+/* Base layout styles */
+#root {
+  width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Reset the text-align that might be causing issues */
+#root {
+  text-align: left;
+}
+
+/* Logo and animations can stay as they are */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em var(--tw-color-primary-500));
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em var(--tw-color-primary-400));
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* Fix container and spacing issues */
+.container {
+  width: 100%;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 1200px;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* Fix body overflow issues */
+body {
+  overflow-x: hidden;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Fix for page transition animations */
+.page-transition-container {
+  position: relative;
+  width: 100%;
+  will-change: opacity, transform;
+}
+
+/* Responsive font sizes */
+h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+/* Responsive charts and maps */
+.chart-container {
+  position: relative;
+  height: 50vh;
+  max-height: 500px;
+  min-height: 300px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .chart-container {
+    height: 40vh;
+    min-height: 250px;
+  }
+}
+
+/* Fix for CSS Grid on small screens */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 1rem;
+}
+
+/* Fix images that might overflow containers */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make form elements responsive */
+input, select, textarea, button {
+  max-width: 100%;
+}
+
+/* Fix for LeafletJS maps in small screens */
+.leaflet-container {
+  z-index: 0 !important; /* Prevent map z-index issues */
+}
+
+/* Fix for mobile horizontal scrolling */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Improved form styling for dark mode */
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="search"],
+.dark textarea,
+.dark select {
+  background-color: rgba(38, 38, 38, 0.8);
+  color: #fff;
+  border-color: rgba(75, 85, 99, 0.4);
+}
+
+.dark input::placeholder {
+  color: rgba(156, 163, 175, 0.8);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
