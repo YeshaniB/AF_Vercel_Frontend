@@ -186,7 +186,7 @@ const Navbar = () => {
               to="/countrylist" 
               className={`hover:text-blue-300 ${location.pathname === '/countrylist' ? 'text-blue-300' : ''}`}
             >
-              Countries
+              Explore Countries
             </Link>
           </motion.li>
           {user ? (
@@ -301,7 +301,7 @@ const Navbar = () => {
                     whileHover="hover"
                   >
                     <Link 
-                      to="/" 
+                      to="/countrylist" 
                       className={`hover:text-blue-300 ${location.pathname === '/' ? 'text-blue-300' : ''}`}
                     >
                     Explore Countries
