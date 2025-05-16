@@ -100,7 +100,7 @@ const Navbar = () => {
             animate={theme === 'dark' ? "dark" : "light"}
             variants={themeToggleVariants}
             onClick={toggleTheme} 
-            className="p-2 mr-4 rounded-full bg-gray-700 focus:outline-none"
+            className="p-2 mr-100 rounded-full bg-gray-700 focus:outline-none"
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
           >
             {theme === 'dark' ? (
