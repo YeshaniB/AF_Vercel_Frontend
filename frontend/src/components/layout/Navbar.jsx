@@ -186,7 +186,7 @@ const Navbar = () => {
               to="/countrylist" 
               className={`hover:text-blue-300 ${location.pathname === '/countrylist' ? 'text-blue-300' : ''}`}
             >
-              Explore Countries
+              Countries
             </Link>
           </motion.li>
           {user ? (
