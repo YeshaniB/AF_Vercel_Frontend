@@ -1,4 +1,6 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import Statistics from '../src/components/dashboard/Statistics';
 
 const mockCountriesData = [

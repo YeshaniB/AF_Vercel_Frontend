@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllCountries } from '../services/api';
@@ -108,8 +109,8 @@ const Home = () => {
         <div className="w-full md:w-2/3">
           <input
             type="text"
-            placeholder="Search for a country..."
-            className="w-full p-3 border rounded shadow-sm dark:bg-neutral-700 dark:border-neutral-600 dark:text-white dark:placeholder-neutral-400"
+            placeholder="Search for a country"
+            className="w-full p-3 border rounded shadow-sm dark:bg-neutral-700 dark:border-neutral-600 dark:text-white placeholder-gray-700"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -132,61 +133,76 @@ const Home = () => {
 
       {/* Countries grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {filteredCountries.map(country => (
-          <div 
-            key={country.cca3} 
-            className="bg-white dark:bg-neutral-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
-            style={{ opacity: 1 }} /* Force opacity */
-          >
-            <Link to={`/country/${country.cca3}`} className="block">
-              <img 
-                src={country.flags.png} 
-                alt={`Flag of ${country.name.common}`}
-                className="w-full h-48 object-cover"
-                style={{ opacity: 1 }} /* Force opacity */
-              />
-              <div className="p-4">
-                <h2 className="font-bold text-xl mb-2 text-neutral-800 dark:text-white">
-                  {country.name.common}
-                </h2>
-                <div className="text-neutral-700 dark:text-neutral-300">
-                  <p><span className="font-semibold">Population:</span> {country.population.toLocaleString()}</p>
-                  <p><span className="font-semibold">Region:</span> {country.region}</p>
-                  <p><span className="font-semibold">Capital:</span> {country.capital?.[0] || 'N/A'}</p>
-                </div>
-              </div>
-            </Link>
-            {user && (
-              <div className="px-4 pb-4">
-                <button 
-                  onClick={() => toggleFavorite(country.cca3)}
-                  className={`flex items-center ${
-                    favorites.includes(country.cca3) 
-                      ? 'text-yellow-500' 
-                      : 'text-gray-400 dark:text-gray-300'
-                  }`}
-                >
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-5 w-5 mr-1" 
-                    fill={favorites.includes(country.cca3) ? "currentColor" : "none"} 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" 
-                    />
-                  </svg>
-                  {favorites.includes(country.cca3) ? 'Favorited' : 'Add to Favorites'}
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+  {filteredCountries.map(country => (
+    <div 
+      key={country.cca3} 
+      className="flex flex-col bg-white dark:bg-neutral-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow h-full"
+    >
+      {/* Flag image with fixed height */}
+      <div className="w-full" style={{ height: '160px' }}> {/* Fixed height of 160px */}
+        <img 
+          src={country.flags.png} 
+          alt={`Flag of ${country.name.common}`}
+          className="w-full h-full object-cover"
+          style={{ height: '160px' }} // Explicit fixed height
+          loading="lazy"
+        />
       </div>
+      
+      {/* Card content */}
+      <div className="flex flex-col flex-grow p-4">
+        <Link to={`/country/${country.cca3}`} className="flex-grow">
+          <h2 className="font-bold text-xl mb-3 text-neutral-800 dark:text-white line-clamp-1">
+            {country.name.common}
+          </h2>
+          <div className="text-neutral-700 dark:text-neutral-300 space-y-2">
+            <p className="flex justify-between">
+              <span className="font-semibold">Population:</span>
+              <span>{country.population.toLocaleString()}</span>
+            </p>
+            <p className="flex justify-between">
+              <span className="font-semibold">Region:</span>
+              <span>{country.region}</span>
+            </p>
+            <p className="flex justify-between">
+              <span className="font-semibold">Capital:</span>
+              <span>{country.capital?.[0] || 'N/A'}</span>
+            </p>
+          </div>
+        </Link>
+        
+        {user && (
+          <div className="mt-4 pt-4 border-t dark:border-neutral-700">
+            <button 
+              onClick={() => toggleFavorite(country.cca3)}
+              className={`flex items-center justify-center w-full py-2 rounded-md transition-colors ${
+                favorites.includes(country.cca3) 
+                  ? 'bg-yellow-500 text-white' 
+                  : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-yellow-500 hover:text-white'
+              }`}
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-5 w-5 mr-2" 
+                fill={favorites.includes(country.cca3) ? "currentColor" : "none"} 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" 
+                />
+              </svg>
+              {favorites.includes(country.cca3) ? 'Favorited' : 'Add to Favorites'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  ))}
+</div>
 
       {filteredCountries.length === 0 && (
         <div className="text-center py-8">

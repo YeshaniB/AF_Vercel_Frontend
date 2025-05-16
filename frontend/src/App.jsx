@@ -26,7 +26,7 @@ function App() {
       <Navbar />
       <main className="container mx-auto px-4 py-8 flex-grow">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/countrylist" element={<Home />} />
           <Route path="/country/:countryCode" element={<CountryDetails />} />
           <Route 
             path="/favorites" 
@@ -47,7 +47,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="*" element={<NotFound />} />
-          <Route path="/homepage" element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
         </Routes>
       </main>
       <Footer />

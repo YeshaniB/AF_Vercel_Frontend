@@ -1,7 +1,9 @@
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import Settings from './Settings';
-import { AuthProvider } from '../../context/AuthContext';
-import { ThemeProvider } from '../../context/ThemeContext';
+import '@testing-library/jest-dom';
+import Settings from '../src/components/dashboard/Settings';
+import { AuthProvider } from '../src/context/AuthContext';
+import { ThemeProvider } from '../src/context/ThemeContext';
 
 // Mock localStorage
 beforeEach(() => {
@@ -39,28 +41,28 @@ describe('Settings Component', () => {
 
   test('toggles dark mode', () => {
     customRender(<Settings />);
-    const toggle = screen.getByRole('button', { name: /toggle dark mode/i });
+    const toggle = screen.getByTestId('theme-toggle');
     fireEvent.click(toggle);
-    // Should visually change, state not directly visible so no assertion unless using mocked context
+    // You might want to add assertions here based on your theme implementation
   });
 
   test('shows confirmation dialog when clicking "Clear All My Data"', () => {
     customRender(<Settings />);
-    fireEvent.click(screen.getByText('Clear All My Data'));
+    fireEvent.click(screen.getByTestId('clear-data-button'));
     expect(screen.getByText('Clear All Data?')).toBeInTheDocument();
   });
 
   test('cancels clear data confirmation', () => {
     customRender(<Settings />);
-    fireEvent.click(screen.getByText('Clear All My Data'));
-    fireEvent.click(screen.getByText('Cancel'));
+    fireEvent.click(screen.getByTestId('clear-data-button'));
+    fireEvent.click(screen.getByTestId('cancel-button'));
     expect(screen.queryByText('Clear All Data?')).not.toBeInTheDocument();
   });
 
   test('clears localStorage and shows notification', async () => {
     customRender(<Settings />);
-    fireEvent.click(screen.getByText('Clear All My Data'));
-    fireEvent.click(screen.getByText('Clear All Data'));
+    fireEvent.click(screen.getByTestId('clear-data-button'));
+    fireEvent.click(screen.getByTestId('confirm-clear-button'));
 
     await waitFor(() =>
       expect(screen.getByText('Your browsing data has been cleared successfully')).toBeInTheDocument()
@@ -73,8 +75,8 @@ describe('Settings Component', () => {
   test('notification disappears after 3 seconds', async () => {
     jest.useFakeTimers();
     customRender(<Settings />);
-    fireEvent.click(screen.getByText('Clear All My Data'));
-    fireEvent.click(screen.getByText('Clear All Data'));
+    fireEvent.click(screen.getByTestId('clear-data-button'));
+    fireEvent.click(screen.getByTestId('confirm-clear-button'));
 
     expect(screen.getByText('Your browsing data has been cleared successfully')).toBeInTheDocument();
 

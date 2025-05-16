@@ -17,7 +17,10 @@ const config = {
   moduleFileExtensions: ["js", "jsx"],
   moduleNameMapper: {
     "\\.(css|less|scss|sass)$": "identity-obj-proxy"
-  }
+  },
+   // Setup file for TextEncoder and TextDecoder polyfills
+   setupFiles: ["<rootDir>/jest.setup.js"],
+
 };
 
 export default config;

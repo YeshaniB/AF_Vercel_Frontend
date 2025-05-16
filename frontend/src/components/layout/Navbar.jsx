@@ -175,10 +175,24 @@ const Navbar = () => {
               Home
             </Link>
           </motion.li>
+          <motion.li
+            custom={1}
+            variants={navItemVariants}
+            initial="hidden"
+            animate="visible"
+            whileHover="hover"
+          >
+            <Link 
+              to="/countrylist" 
+              className={`hover:text-blue-300 ${location.pathname === '/countrylist' ? 'text-blue-300' : ''}`}
+            >
+              Countries
+            </Link>
+          </motion.li>
           {user ? (
             <>
               <motion.li
-                custom={1}
+                custom={2}
                 variants={navItemVariants}
                 initial="hidden"
                 animate="visible"
@@ -192,7 +206,7 @@ const Navbar = () => {
                 </Link>
               </motion.li>
               <motion.li
-                custom={2}
+                custom={3}
                 variants={navItemVariants}
                 initial="hidden"
                 animate="visible"
@@ -206,7 +220,7 @@ const Navbar = () => {
                 </Link>
               </motion.li>
               <motion.li
-                custom={3}
+                custom={4}
                 variants={navItemVariants}
                 initial="hidden"
                 animate="visible"
@@ -270,7 +284,7 @@ const Navbar = () => {
               >
                 <Link 
                   to="/" 
-                  className={`block hover:text-blue-300 ${location.pathname === '/' ? 'text-blue-300' : ''}`} 
+                  className={`block hover:text-blue-300 ${location.pathname === '/homepage' ? 'text-blue-300' : ''}`} 
                   onClick={toggleMenu}
                 >
                   Home

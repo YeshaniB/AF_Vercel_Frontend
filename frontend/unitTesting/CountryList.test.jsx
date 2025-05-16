@@ -1,14 +1,27 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import Home from './Home';
-import { getAllCountries } from '../services/api';
-import { AuthContext } from '../context/AuthContext';
+import Home from '../src/pages/Home';
+import { getAllCountries } from '../src/services/api';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 // Mock the API call
-jest.mock('../services/api', () => ({
+jest.mock('../src/services/api', () => ({
   getAllCountries: jest.fn(),
 }));
+
+// Mock the AuthContext using jest.requireActual to get React
+jest.mock('../src/context/AuthContext', () => {
+  const React = jest.requireActual('react');
+  const mockAuthContextValue = {
+    user: { username: 'testuser' }
+  };
+  
+  return {
+    __esModule: true,
+    default: React.createContext(mockAuthContextValue),
+    useAuth: () => mockAuthContextValue,
+  };
+});
 
 const mockCountries = [
   {
@@ -29,17 +42,6 @@ const mockCountries = [
   },
 ];
 
-// Helper to render with auth context
-const renderWithAuth = (ui, user = null) => {
-  return render(
-    <AuthContext.Provider value={{ user }}>
-      <Router>
-        {ui}
-      </Router>
-    </AuthContext.Provider>
-  );
-};
-
 describe('Home Component', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -48,13 +50,21 @@ describe('Home Component', () => {
 
   it('shows loading spinner initially', async () => {
     getAllCountries.mockResolvedValue([]);
-    renderWithAuth(<Home />);
-    expect(screen.getByRole('status')).toBeInTheDocument(); // spinner div
+    render(
+      <Router>
+        <Home />
+      </Router>
+    );
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('displays countries after loading', async () => {
     getAllCountries.mockResolvedValue(mockCountries);
-    renderWithAuth(<Home />);
+    render(
+      <Router>
+        <Home />
+      </Router>
+    );
     
     expect(await screen.findByText('United States')).toBeInTheDocument();
     expect(screen.getByText('France')).toBeInTheDocument();
@@ -62,7 +72,11 @@ describe('Home Component', () => {
 
   it('filters countries by search term', async () => {
     getAllCountries.mockResolvedValue(mockCountries);
-    renderWithAuth(<Home />);
+    render(
+      <Router>
+        <Home />
+      </Router>
+    );
 
     await waitFor(() => screen.getByText('France'));
     
@@ -76,7 +90,11 @@ describe('Home Component', () => {
 
   it('filters countries by region', async () => {
     getAllCountries.mockResolvedValue(mockCountries);
-    renderWithAuth(<Home />);
+    render(
+      <Router>
+        <Home />
+      </Router>
+    );
 
     await waitFor(() => screen.getByText('France'));
     
@@ -90,14 +108,22 @@ describe('Home Component', () => {
 
   it('handles API error gracefully', async () => {
     getAllCountries.mockRejectedValue(new Error('API failed'));
-    renderWithAuth(<Home />);
+    render(
+      <Router>
+        <Home />
+      </Router>
+    );
     
     expect(await screen.findByText(/Failed to load countries/i)).toBeInTheDocument();
   });
 
   it('allows a user to favorite and unfavorite a country', async () => {
     getAllCountries.mockResolvedValue(mockCountries);
-    renderWithAuth(<Home />, { username: 'testuser' });
+    render(
+      <Router>
+        <Home />
+      </Router>
+    );
 
     await waitFor(() => screen.getByText('United States'));
 

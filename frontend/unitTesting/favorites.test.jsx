@@ -1,13 +1,14 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
-import Favorites from './Favorites';
-import { useAuth } from '../context/AuthContext';
-import { getCountryByCode } from '../services/api';
+import Favorites from '../src/pages/Favorites';
+import { useAuth } from '../src/context/AuthContext';
+import { getCountryByCode } from '../src/services/api';
 
 // Mock dependencies
-jest.mock('../context/AuthContext');
-jest.mock('../services/api');
+jest.mock('../src/context/AuthContext');
+jest.mock('../src/services/api');
 
 // Mock localStorage
 const localStorageMock = (function() {
@@ -44,26 +45,38 @@ describe('Favorites Component', () => {
   ];
 
   beforeEach(() => {
-    // Reset all mocks and localStorage
     jest.clearAllMocks();
     window.localStorage.clear();
-    
-    // Mock useAuth
     useAuth.mockImplementation(() => ({
       user: mockUser
     }));
   });
 
-  it('shows loading spinner initially', () => {
-    useAuth.mockImplementation(() => ({ user: mockUser }));
-    
+  it('shows loading spinner initially', async () => {
+    // Create a promise that doesn't resolve immediately
+    let resolvePromise;
+    const promise = new Promise(resolve => {
+      resolvePromise = resolve;
+    });
+    getCountryByCode.mockImplementation(() => promise);
+
+    window.localStorage.setItem(`favorites_${mockUser.username}`, JSON.stringify(['USA']));
+
     render(
       <BrowserRouter>
         <Favorites />
       </BrowserRouter>
     );
 
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    // Check for loading spinner
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+
+    // Resolve the promise after we've checked for loading state
+    resolvePromise(mockCountries[0]);
+    
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
+    });
   });
 
   it('shows error message when loading fails', async () => {
@@ -90,10 +103,8 @@ describe('Favorites Component', () => {
       </BrowserRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('You haven\'t added any countries to your favorites yet.')).toBeInTheDocument();
-      expect(screen.getByText('Explore Countries')).toBeInTheDocument();
-    });
+    expect(await screen.findByText('You haven\'t added any countries to your favorites yet.')).toBeInTheDocument();
+    expect(screen.getByText('Explore Countries')).toBeInTheDocument();
   });
 
   it('displays favorite countries when they exist', async () => {
@@ -108,12 +119,10 @@ describe('Favorites Component', () => {
       </BrowserRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('Your Favorite Countries')).toBeInTheDocument();
-      expect(screen.getByText('United States')).toBeInTheDocument();
-      expect(screen.getByText('Canada')).toBeInTheDocument();
-      expect(screen.getAllByText('Remove from Favorites')).toHaveLength(2);
-    });
+    expect(await screen.findByText('Your Favorite Countries')).toBeInTheDocument();
+    expect(screen.getByText('United States')).toBeInTheDocument();
+    expect(screen.getByText('Canada')).toBeInTheDocument();
+    expect(screen.getAllByText('Remove from Favorites')).toHaveLength(2);
   });
 
   it('allows removing a country from favorites', async () => {
@@ -128,7 +137,7 @@ describe('Favorites Component', () => {
       </BrowserRouter>
     );
 
-    await waitFor(() => screen.getByText('United States'));
+    await screen.findByText('United States');
 
     // Click remove button for USA
     fireEvent.click(screen.getAllByText('Remove from Favorites')[0]);
@@ -155,14 +164,12 @@ describe('Favorites Component', () => {
       </BrowserRouter>
     );
 
-    await waitFor(() => screen.getByText('United States'));
+    await screen.findByText('United States');
 
     // Click remove button
     fireEvent.click(screen.getByText('Remove from Favorites'));
 
-    await waitFor(() => {
-      expect(screen.getByText('You haven\'t added any countries to your favorites yet.')).toBeInTheDocument();
-    });
+    expect(await screen.findByText('You haven\'t added any countries to your favorites yet.')).toBeInTheDocument();
   });
 
   it('does not load favorites when user is not logged in', async () => {
@@ -174,10 +181,8 @@ describe('Favorites Component', () => {
       </BrowserRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('You haven\'t added any countries to your favorites yet.')).toBeInTheDocument();
-      expect(getCountryByCode).not.toHaveBeenCalled();
-    });
+    expect(await screen.findByText('You haven\'t added any countries to your favorites yet.')).toBeInTheDocument();
+    expect(getCountryByCode).not.toHaveBeenCalled();
   });
 
   it('renders country cards with correct information', async () => {
@@ -190,12 +195,10 @@ describe('Favorites Component', () => {
       </BrowserRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('United States')).toBeInTheDocument();
-      expect(screen.getByText('331,000,000')).toBeInTheDocument();
-      expect(screen.getByText('Americas')).toBeInTheDocument();
-      expect(screen.getByText('Washington D.C.')).toBeInTheDocument();
-      expect(screen.getByAltText('Flag of United States')).toBeInTheDocument();
-    });
+    expect(await screen.findByText('United States')).toBeInTheDocument();
+    expect(screen.getByText('331,000,000')).toBeInTheDocument();
+    expect(screen.getByText('Americas')).toBeInTheDocument();
+    expect(screen.getByText('Washington D.C.')).toBeInTheDocument();
+    expect(screen.getByAltText('Flag of United States')).toBeInTheDocument();
   });
 });

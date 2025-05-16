@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getCountryByCode } from '../services/api';
@@ -58,9 +59,18 @@ const Favorites = () => {
 
   if (loading) {
     return (
+      // <div className="flex justify-center items-center h-64">
+      //   <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+      // </div>
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+      <div 
+        className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"
+        role="status"
+        data-testid="loading-spinner"
+      >
+        <span className="sr-only">Loading...</span>
       </div>
+    </div>
     );
   }
 
@@ -95,13 +105,15 @@ const Favorites = () => {
             className="bg-white dark:bg-neutral-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
           >
             <Link to={`/country/${country.cca3}`} className="block">
-              <img 
-                src={country.flags.png} 
-                alt={`Flag of ${country.name.common}`}
-                className="w-full h-48 object-cover"
-              />
+            <img 
+              src={country.flags.png} 
+              alt={`Flag of ${country.name.common}`}
+              className="w-full h-full object-cover"
+              style={{ height: '160px' }} // Explicit fixed height
+              loading="lazy"
+            />
               <div className="p-4">
-                <h2 className="font-bold text-xl mb-2 text-neutral-800 dark:text-white">
+                <h2 className="font-bold text-xl mb-3 text-neutral-800 dark:text-white line-clamp-1">
                   {country.name.common}
                 </h2>
                 <div className="text-neutral-700 dark:text-neutral-300">
